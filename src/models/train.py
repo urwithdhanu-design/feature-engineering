@@ -22,8 +22,20 @@ from src.rules.nudge_rules import derive_nudge_type, derive_tone, derive_risk_la
 
 ROOT = Path(__file__).resolve().parents[2]
 SCENARIOS_DIR = ROOT / "data" / "scenarios"
+TRAINING_DIR = ROOT / "data" / "training"
 MODELS_DIR = ROOT / "models"
 PERSONAS_DIR = ROOT / "data" / "personas"
+DEFAULT_SYNTHETIC_DATASET = TRAINING_DIR / "synthetic_5000_2mo.jsonl"
+
+
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    accounts: list[dict[str, Any]] = []
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                accounts.append(json.loads(line))
+    return accounts
 
 
 def load_all_scenarios() -> list[dict[str, Any]]:
@@ -35,6 +47,14 @@ def load_all_scenarios() -> list[dict[str, Any]]:
         for path in sorted(persona_dir.glob("*.json")):
             accounts.append(json.loads(path.read_text(encoding="utf-8")))
     return accounts
+
+
+def load_training_data(dataset_path: Path | None = None) -> tuple[list[dict[str, Any]], str]:
+    """Load training accounts; prefers large synthetic dataset when present."""
+    path = dataset_path or DEFAULT_SYNTHETIC_DATASET
+    if path.exists():
+        return load_jsonl(path), str(path)
+    return load_all_scenarios(), "data/scenarios (177 persona matrix files)"
 
 
 def load_personas() -> dict[str, dict]:
@@ -77,8 +97,14 @@ class ModelBundle:
         self.tone_encoder = LabelEncoder()
         self.feature_columns = FEATURE_COLUMNS
 
-    def train(self, accounts: list[dict[str, Any]] | None = None) -> dict[str, Any]:
-        accounts = accounts or load_all_scenarios()
+    def train(
+        self,
+        accounts: list[dict[str, Any]] | None = None,
+        dataset_path: Path | None = None,
+    ) -> dict[str, Any]:
+        data_source = "custom"
+        if accounts is None:
+            accounts, data_source = load_training_data(dataset_path)
         X, y_nudge, y_tone, y_risk = prepare_training_data(accounts)
 
         X_train, X_test, yn_train, yn_test, yt_train, yt_test, yr_train, yr_test = (
@@ -117,6 +143,9 @@ class ModelBundle:
 
         return {
             "training_samples": len(accounts),
+            "train_split_size": len(X_train),
+            "test_split_size": len(X_test),
+            "data_source": data_source,
             "nudge_accuracy": round(nudge_acc, 4),
             "tone_accuracy": round(tone_acc, 4),
             **risk_metrics,
@@ -152,9 +181,9 @@ class ModelBundle:
         return result
 
 
-def train_and_save() -> dict[str, Any]:
+def train_and_save(dataset_path: Path | None = None) -> dict[str, Any]:
     bundle = ModelBundle()
-    metrics = bundle.train()
+    metrics = bundle.train(dataset_path=dataset_path)
     model_path = bundle.save()
     metrics["model_path"] = str(model_path)
     metrics_path = MODELS_DIR / "training_metrics.json"

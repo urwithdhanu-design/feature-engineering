@@ -16,9 +16,24 @@ def cmd_generate(_: argparse.Namespace) -> None:
     print(f"Generated {count} scenario JSON files.")
 
 
-def cmd_train(_: argparse.Namespace) -> None:
+def cmd_generate_synthetic(args: argparse.Namespace) -> None:
+    from scripts.generate_synthetic_training_data import generate_dataset
+    path = generate_dataset(
+        count=args.count,
+        history_months=args.months,
+        seed=args.seed,
+    )
+    print(f"Generated {args.count} synthetic customers ({args.months} months each).")
+    print(f"Output: {path}")
+
+
+def cmd_train(args: argparse.Namespace) -> None:
+    from pathlib import Path
+
     from src.models.train import train_and_save
-    metrics = train_and_save()
+
+    dataset = Path(args.dataset) if args.dataset else None
+    metrics = train_and_save(dataset_path=dataset)
     print(json.dumps(metrics, indent=2))
 
 
@@ -52,7 +67,20 @@ def main() -> None:
     gen = sub.add_parser("generate", help="Generate all persona scenario JSON files")
     gen.set_defaults(func=cmd_generate)
 
-    train = sub.add_parser("train", help="Train ML models on scenario data")
+    syn = sub.add_parser(
+        "generate-synthetic",
+        help="Generate large synthetic training set (default 5000 customers, 2 months each)",
+    )
+    syn.add_argument("--count", type=int, default=5000, help="Number of synthetic customers")
+    syn.add_argument("--months", type=int, default=2, help="Months of payment history per customer")
+    syn.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
+    syn.set_defaults(func=cmd_generate_synthetic)
+
+    train = sub.add_parser("train", help="Train ML models on training data")
+    train.add_argument(
+        "--dataset",
+        help="Path to JSONL training file (default: data/training/synthetic_5000_2mo.jsonl if present)",
+    )
     train.set_defaults(func=cmd_train)
 
     rec = sub.add_parser("recommend", help="Get nudge recommendation for an account JSON")

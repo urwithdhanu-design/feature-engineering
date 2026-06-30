@@ -92,8 +92,14 @@ def account_to_features(account: dict[str, Any]) -> dict[str, float]:
         "account_status_open_indicator": float(acc.get("account_status_open_indicator", 1)),
     }
 
-    for i, code in enumerate(history.ljust(3, "M")[:3]):
-        features[f"cycle_{i + 1}_code"] = float(history_codes.get(code, 0))
+    # Pad left so 1–2 month histories don't invent fake on-time cycles
+    no_cycle = 5.0
+    padded = history.rjust(3, "\0")[:3]
+    for i, code in enumerate(padded):
+        if code == "\0":
+            features[f"cycle_{i + 1}_code"] = no_cycle
+        else:
+            features[f"cycle_{i + 1}_code"] = float(history_codes.get(code, 0))
 
     return features
 
