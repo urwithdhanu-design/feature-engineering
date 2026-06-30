@@ -6,7 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.features.engineer import account_to_features, accounts_to_dataframe, enrich_account
+from src.data.cleaning import clean_account_for_inference
+from src.features.engineer import enrich_account
 from src.messages.templates import format_message, message_scenario_key
 from src.models.train import ModelBundle
 from src.rules.nudge_rules import derive_nudge_type, derive_tone
@@ -34,20 +35,25 @@ class NudgeRecommender:
                 self.bundle = ModelBundle.load(model_path)
 
     def recommend(self, account: dict[str, Any]) -> dict[str, Any]:
+        account = clean_account_for_inference(account)
         enriched = enrich_account(account)
         persona = load_persona(enriched.get("persona_id", ""))
 
-        features = accounts_to_dataframe([enriched])
-
         if self.bundle:
+            features = self.bundle.build_features([enriched])
             nudge_type = self.bundle.predict_nudge(features)
             tone = self.bundle.predict_tone(features)
             risk = self.bundle.predict_risk(features)
+            segment_detail = self.bundle.predict_segment_detail(features)
         else:
+            from src.features.engineer import accounts_to_dataframe
+            from src.rules.nudge_rules import derive_risk_labels
+
+            features = accounts_to_dataframe([enriched])
             nudge_type = derive_nudge_type(enriched)
             tone = derive_tone(enriched, persona)
-            from src.rules.nudge_rules import derive_risk_labels
             risk = derive_risk_labels(enriched)
+            segment_detail = None
 
         reward = assess_reward_eligibility(enriched)
         dd_active = int(enriched.get("direct_debit_active_indicator", 0)) == 1
@@ -86,6 +92,7 @@ class NudgeRecommender:
             "customerId": enriched.get("customerId"),
             "productId": enriched.get("productId"),
             "persona_id": enriched.get("persona_id"),
+            "customer_segment": segment_detail,
             "payment_history_string": enriched.get("payment_history_string"),
             "nudge_type": nudge_type,
             "tone": tone,

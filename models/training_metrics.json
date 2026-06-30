@@ -1,8 +1,19 @@
 {
   "training_samples": 5000,
+  "samples_after_cleaning": 5000,
   "train_split_size": 4000,
   "test_split_size": 1000,
   "data_source": "C:\\projects\\feature-engineering-account-builder-missing-payments\\data\\training\\synthetic_5000_2mo.jsonl",
+  "n_clusters": 3,
+  "cleaning": {
+    "input_count": 5000,
+    "output_count": 5000,
+    "duplicates_removed": 0,
+    "invalid_removed": 0,
+    "records_corrected": 0,
+    "warnings": []
+  },
+  "segment_profiles_path": "C:\\projects\\feature-engineering-account-builder-missing-payments\\models\\segment_profiles.json",
   "nudge_accuracy": 0.999,
   "tone_accuracy": 1.0,
   "risk_missed_payment_mae": 0.0002,

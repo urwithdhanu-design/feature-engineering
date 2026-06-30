@@ -1,0 +1,22 @@
+Customer ID     : CUST55001
+Payment history : MX
+Customer segment: at_risk (id=2)
+Segment meaning : Medium risk — some missed or late payments, may have arrears
+Clusters trained: 3 behavioural groups (not age personas)
+Nudge type      : motivational
+Tone            : professional_friendly
+Show in UI      : True
+
+Message:
+A late payment was recorded last cycle — but you can turn this around. Pay £50.0 by 2026-08-09 and rebuild your payment streak.
+
+Payment risk:
+  Missed payment    : 93.0%
+  Late payment      : 55.0%
+  Minimum only      : 85.0%
+
+£20 reward:
+  Eligible          : False
+  On-time payments  : 1
+  Still needed      : 2
+  Blockers          : Missed or never-paid cycles on record, Arrears outstanding

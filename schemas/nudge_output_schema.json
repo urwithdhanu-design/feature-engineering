@@ -14,8 +14,16 @@
   "properties": {
     "customerId": { "type": "string" },
     "productId": { "type": "string" },
-    "persona_id": { "type": "string" },
-    "payment_history_string": { "type": "string", "pattern": "^[MDLXN]{3}$" },
+    "customer_segment": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string", "enum": ["reliable", "at_risk", "high_risk", "segment_0"] },
+        "label": { "type": "string" },
+        "n_clusters": { "type": "integer" },
+        "note": { "type": "string" }
+      }
+    },
     "nudge_type": {
       "type": "string",
       "enum": ["reminder", "warning", "motivational", "reward_led", "direct_debit_setup", "none"]

@@ -1,0 +1,48 @@
+{
+  "n_clusters": 3,
+  "note": "Behavioural K-Means segment from payment patterns. Not the same as age-based personas (Ethan/Jordan/Sarah).",
+  "segments": {
+    "0": {
+      "count": 704,
+      "avg_utilization": 0.5396,
+      "avg_missing_payments": 1.8778,
+      "avg_on_time_payments": 0.0298,
+      "avg_age": 36.9,
+      "age_min": 18,
+      "age_max": 55,
+      "pct_direct_debit": 0.6378,
+      "pct_has_arrears": 1.0,
+      "cluster_id": 0,
+      "segment_name": "high_risk",
+      "segment_label": "High risk — frequent missed payments and arrears"
+    },
+    "1": {
+      "count": 2473,
+      "avg_utilization": 0.5067,
+      "avg_missing_payments": 0.3538,
+      "avg_on_time_payments": 1.4917,
+      "avg_age": 36.6,
+      "age_min": 18,
+      "age_max": 55,
+      "pct_direct_debit": 0.6745,
+      "pct_has_arrears": 0.0,
+      "cluster_id": 1,
+      "segment_name": "reliable",
+      "segment_label": "Low risk — consistent on-time payments, no arrears"
+    },
+    "2": {
+      "count": 1823,
+      "avg_utilization": 0.4795,
+      "avg_missing_payments": 0.734,
+      "avg_on_time_payments": 0.6796,
+      "avg_age": 36.4,
+      "age_min": 18,
+      "age_max": 55,
+      "pct_direct_debit": 0.672,
+      "pct_has_arrears": 1.0,
+      "cluster_id": 2,
+      "segment_name": "at_risk",
+      "segment_label": "Medium risk — some missed or late payments, may have arrears"
+    }
+  }
+}

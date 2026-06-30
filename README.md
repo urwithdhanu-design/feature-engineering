@@ -33,12 +33,20 @@ Three-cycle history string (oldest → newest):
 
 ## Quick start
 
+See **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** for full install → train → `input/` / `output/` run steps.
+
 ```bash
 pip install -r requirements.txt
+python main.py generate-synthetic
+python main.py train
+python main.py run
+```
+
+Legacy persona matrix (177 scenarios):
+
+```bash
 python main.py generate    # 177 scenario JSON files (59 × 3 personas)
-python main.py train       # Train ML models
 python main.py demo --persona ethan --scenario MMM
-python main.py recommend data/scenarios/ethan/XXX.json
 ```
 
 ## Project structure
