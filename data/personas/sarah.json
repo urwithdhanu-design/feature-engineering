@@ -1,0 +1,14 @@
+{
+  "persona_id": "sarah",
+  "display_name": "Sarah",
+  "customer_id_prefix": "CUST4003",
+  "product_id": "CARD0003S",
+  "age": 38,
+  "age_group": "mid_career",
+  "tone": "supportive_clear",
+  "tone_description": "Warm, respectful, and practical — focuses on financial wellbeing and family priorities.",
+  "fresco_segment": "Established Families",
+  "employment_status": "Established professional",
+  "marital_status": "Married",
+  "vulnerability_flag": "N"
+}

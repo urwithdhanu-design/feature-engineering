@@ -1,0 +1,9 @@
+{
+  "training_samples": 177,
+  "nudge_accuracy": 1.0,
+  "tone_accuracy": 1.0,
+  "risk_missed_payment_mae": 0.0026,
+  "risk_late_payment_mae": 0.0003,
+  "risk_minimum_only_payment_mae": 0.0001,
+  "model_path": "C:\\projects\\feature-engineering-account-builder-missing-payments\\models\\model_bundle.pkl"
+}

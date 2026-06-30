@@ -1,0 +1,14 @@
+{
+  "persona_id": "jordan",
+  "display_name": "Jordan",
+  "customer_id_prefix": "CUST4002",
+  "product_id": "CARD0002J",
+  "age": 19,
+  "age_group": "gen_z",
+  "tone": "casual_energetic",
+  "tone_description": "Short, direct, upbeat messaging with simple actions — suited to younger customers new to credit.",
+  "fresco_segment": "Young Starters",
+  "employment_status": "Student / Part-time",
+  "marital_status": null,
+  "vulnerability_flag": "N"
+}

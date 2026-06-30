@@ -1,0 +1,14 @@
+{
+  "persona_id": "ethan",
+  "display_name": "Ethan",
+  "customer_id_prefix": "CUST4001",
+  "product_id": "CARD0001E",
+  "age": 23,
+  "age_group": "young_adult",
+  "tone": "professional_friendly",
+  "tone_description": "Clear, approachable language with light encouragement — suited to early-career customers building credit habits.",
+  "fresco_segment": "Working Singles & Couples",
+  "employment_status": "Early career",
+  "marital_status": null,
+  "vulnerability_flag": "N"
+}

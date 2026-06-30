@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NudgeRecommendation",
+  "type": "object",
+  "required": [
+    "customerId",
+    "nudge_type",
+    "tone",
+    "message",
+    "payment_risk",
+    "reward_eligibility",
+    "show_nudge"
+  ],
+  "properties": {
+    "customerId": { "type": "string" },
+    "productId": { "type": "string" },
+    "persona_id": { "type": "string" },
+    "payment_history_string": { "type": "string", "pattern": "^[MDLXN]{3}$" },
+    "nudge_type": {
+      "type": "string",
+      "enum": ["reminder", "warning", "motivational", "reward_led", "direct_debit_setup", "none"]
+    },
+    "tone": {
+      "type": "string",
+      "enum": ["professional_friendly", "casual_energetic", "supportive_clear"]
+    },
+    "message": { "type": "string" },
+    "message_scenario": { "type": "string" },
+    "payment_risk": {
+      "type": "object",
+      "properties": {
+        "risk_missed_payment": { "type": "number", "minimum": 0, "maximum": 1 },
+        "risk_late_payment": { "type": "number", "minimum": 0, "maximum": 1 },
+        "risk_minimum_only_payment": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "reward_eligibility": {
+      "type": "object",
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "on_time_payments_count": { "type": "integer" },
+        "payments_needed": { "type": "integer" },
+        "reasons": { "type": "array", "items": { "type": "string" } },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "direct_debit": {
+      "type": "object",
+      "properties": {
+        "active": { "type": "boolean" },
+        "type": { "type": "string" }
+      }
+    },
+    "show_nudge": { "type": "boolean" }
+  }
+}
