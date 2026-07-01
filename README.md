@@ -33,13 +33,15 @@ Three-cycle history string (oldest → newest):
 
 ## Quick start
 
-See **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** for full install → train → `input/` / `output/` run steps.
+See **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** for full install → train → `input/` / `output/` run steps.  
+See **[docs/AI_TEAM_BRIEFING.md](docs/AI_TEAM_BRIEFING.md)** §7 for training data & model architecture (meeting talking points).
 
 ```bash
 pip install -r requirements.txt
 python main.py generate-synthetic
 python main.py train
 python main.py run
+python main.py serve   # API at http://127.0.0.1:8000/docs
 ```
 
 Legacy persona matrix (177 scenarios):

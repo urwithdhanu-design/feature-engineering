@@ -167,6 +167,23 @@ def cmd_demo(args: argparse.Namespace) -> None:
     print(json.dumps(result, indent=2))
 
 
+def cmd_serve(args: argparse.Namespace) -> None:
+    import uvicorn
+
+    if not (ROOT / "models" / "model_bundle.pkl").exists():
+        print("Model not found. Run first: python main.py train", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"Starting API at http://{args.host}:{args.port}")
+    print(f"Docs at http://{args.host}:{args.port}/docs")
+    uvicorn.run(
+        "src.api.app:app",
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Credit card missing payments — nudge & risk ML platform"
@@ -223,6 +240,12 @@ def main() -> None:
     demo.add_argument("--persona", choices=["ethan", "sarah", "jordan"], default="ethan")
     demo.add_argument("--scenario", default="MMM", help="Payment history code e.g. MMM, XXL")
     demo.set_defaults(func=cmd_demo)
+
+    serve = sub.add_parser("serve", help="Start FastAPI HTTP server")
+    serve.add_argument("--host", default="127.0.0.1", help="Bind host")
+    serve.add_argument("--port", type=int, default=8000, help="Bind port")
+    serve.add_argument("--reload", action="store_true", help="Auto-reload on code changes")
+    serve.set_defaults(func=cmd_serve)
 
     args = parser.parse_args()
     args.func(args)

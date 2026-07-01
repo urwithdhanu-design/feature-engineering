@@ -59,6 +59,14 @@
         "type": { "type": "string" }
       }
     },
-    "show_nudge": { "type": "boolean" }
+    "show_nudge": { "type": "boolean" },
+    "guardrails": {
+      "type": "object",
+      "properties": {
+        "passed": { "type": "boolean" },
+        "actions_taken": { "type": "array", "items": { "type": "string" } },
+        "checks": { "type": "array" }
+      }
+    }
   }
 }

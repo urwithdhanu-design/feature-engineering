@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.data.cleaning import clean_account_for_inference
 from src.features.engineer import enrich_account
+from src.guardrails.pipeline import run_input_guardrails, run_output_guardrails
 from src.messages.templates import format_message, message_scenario_key
 from src.models.train import ModelBundle
 from src.rules.nudge_rules import derive_nudge_type, derive_tone
@@ -25,7 +25,7 @@ def load_persona(persona_id: str) -> dict[str, Any] | None:
 
 
 class NudgeRecommender:
-    """Combines ML models, business rules, and message templates."""
+    """Combines ML models, business rules, message templates, and guardrails."""
 
     def __init__(self, model_bundle: ModelBundle | None = None) -> None:
         self.bundle = model_bundle
@@ -35,7 +35,7 @@ class NudgeRecommender:
                 self.bundle = ModelBundle.load(model_path)
 
     def recommend(self, account: dict[str, Any]) -> dict[str, Any]:
-        account = clean_account_for_inference(account)
+        account, guardrail_report = run_input_guardrails(account)
         enriched = enrich_account(account)
         persona = load_persona(enriched.get("persona_id", ""))
 
@@ -57,12 +57,6 @@ class NudgeRecommender:
 
         reward = assess_reward_eligibility(enriched)
         dd_active = int(enriched.get("direct_debit_active_indicator", 0)) == 1
-
-        # Rule overrides for critical cases
-        if reward.eligible:
-            nudge_type = "reward_led"
-        elif not dd_active and nudge_type == "reminder" and reward.payments_needed > 0:
-            nudge_type = "direct_debit_setup"
 
         scenario_key = message_scenario_key(
             nudge_type=nudge_type,
@@ -88,7 +82,7 @@ class NudgeRecommender:
             reward_info=reward_info,
         )
 
-        return {
+        draft = {
             "customerId": enriched.get("customerId"),
             "productId": enriched.get("productId"),
             "persona_id": enriched.get("persona_id"),
@@ -106,6 +100,8 @@ class NudgeRecommender:
             },
             "show_nudge": nudge_type != "none",
         }
+
+        return run_output_guardrails(enriched, draft, guardrail_report)
 
 
 def recommend_for_account(account: dict[str, Any]) -> dict[str, Any]:

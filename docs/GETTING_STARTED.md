@@ -134,7 +134,7 @@ A sample file is already included: `input\sample_customer_55001.json`
 
 ---
 
-## Step 7 — Run the program
+## Step 7 — Run the program (files)
 
 Process **all** JSON files in `input\` and write results to `output\`:
 
@@ -146,16 +146,53 @@ Example output:
 
 ```
 OK  sample_customer_55001.json  ->  sample_customer_55001_recommendation.json, sample_customer_55001_summary.txt
-
-Processed 1 customer(s). Output folder: ...\output
 ```
-
-### Output files per customer
 
 | File | Contents |
 |------|----------|
-| `output\<name>_recommendation.json` | Full result for UI/API (nudge, message, risk, reward) |
+| `output\<name>_recommendation.json` | Full result for UI/API |
 | `output\<name>_summary.txt` | Human-readable summary |
+
+---
+
+## Step 8 — Start the FastAPI server
+
+```powershell
+pip install -r requirements.txt
+python main.py train
+python main.py serve
+```
+
+| URL | Purpose |
+|-----|---------|
+| http://127.0.0.1:8000/docs | Interactive Swagger UI |
+| http://127.0.0.1:8000/health | Health check |
+| http://127.0.0.1:8000/v1/segments | Named cluster profiles |
+| http://127.0.0.1:8000/v1/recommend | POST single customer |
+
+### Example API request
+
+```powershell
+curl -X POST http://127.0.0.1:8000/v1/recommend `
+  -H "Content-Type: application/json" `
+  -d "@input/sample_customer_55001.json"
+```
+
+Or with PowerShell:
+
+```powershell
+$body = Get-Content input\sample_customer_55001.json -Raw
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/v1/recommend -Body $body -ContentType "application/json"
+```
+
+### Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/health` | Model loaded, cluster count |
+| GET | `/v1/segments` | `reliable` / `at_risk` / `high_risk` profiles |
+| POST | `/v1/recommend` | Single customer recommendation |
+| POST | `/v1/recommend/batch` | Up to 100 customers |
 
 ---
 
